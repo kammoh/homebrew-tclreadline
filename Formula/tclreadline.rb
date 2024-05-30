@@ -1,32 +1,31 @@
 class Tclreadline < Formula
   desc "Makes the GNU Readline library available for interactive tcl shells"
   homepage "https://tclreadline.sourceforge.io"
-  url "https://github.com/flightaware/tclreadline/archive/v2.2.0.tar.gz"
-  sha256 "6ca811ff8fbb3a9c8c400a8f7a3c2819a232c7b8e216cc10c4b47aef6a07d507"
-
+  url "https://github.com/flightaware/tclreadline/archive/v2.3.8.tar.gz"
+  sha256 "a64e0faed5957b8e1ac16f179948e21cdd6d3b8313590b7ab049a3192ab864fb"
 
   bottle do
   end
-  
 
+  depends_on 'tcl-tk'
   depends_on 'readline'
+  depends_on 'make' => :build
   depends_on 'autoconf' => :build
   depends_on 'automake' => :build
   depends_on 'libtool' => :build
 
-
   def install
-    system "./autogen.sh", "--disable-dependency-tracking",
+    system "./configure", "--disable-dependency-tracking",
                            "--disable-silent-rules",
                            "--prefix=#{prefix}",
-                           "--with-tcl=/usr/local/opt/tcl-tk/"
-                           "--with-tcl=#{MacOS.sdk_path}/System/Library/Frameworks/Tcl.framework"
+                           "--with-tcl=#{Formula["tcl-tk"].opt_lib}",
+                           "--with-readline-includes=#{Formula["readline"].opt_include}"
 
     system "make", "install" 
   end
 
   def caveats
-    <<-EOS.undent
+    <<-EOS
     To enable readline completion in tclsh put something like this in your ~/.tclshrc
 
     if {$tcl_interactive} {
